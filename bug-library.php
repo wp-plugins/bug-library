@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.0
+Version: 1.0.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -84,10 +84,9 @@ class bug_library_plugin {
 				
 		add_action("manage_posts_custom_column", array($this, "bugs_populate_columns"));
 		add_filter("manage_edit-bug-library-bugs_columns", array($this, "bugs_columns_list"));
-				
-		// Work in progress
-		//add_filter("manage_edit-bug-library-bugs_sortable_columns", array($this, "bugs_sortable_columns"));
-		//add_filter('request', array($this, 'bug_library_view_product_column_orderby' ));
+		
+		add_action('restrict_manage_posts', array($this, 'restrict_listings_by_product'));
+		add_filter('parse_query', array($this, 'convert_product_id_to_taxonomy_term_in_query'));
 		
 		add_action('save_post', array($this, 'add_bug_field'), 10, 2);
 		add_action('delete_post', array($this, 'delete_bug_field'));
@@ -273,27 +272,80 @@ class bug_library_plugin {
 		elseif ("bug-library-view-status" == $column) echo $status[0]->name;
 		elseif ("bug-library-view-type" == $column) echo $types[0]->name;
 	}
-
-	/* function bugs_sortable_columns($columns)
-	{
-		$columns['bug-library-view-ID'] = 'bug-library-view-ID';
-		$columns['bug-library-view-product'] = 'bug-library-view-product';
-		$columns['bug-library-view-status'] = 'bug-library-view-status';
-		$columns['bug-library-view-type'] = 'bug-library-view-type';
-		
-		return $columns;
+	
+	function restrict_listings_by_product() {
+		global $typenow;
+		global $wp_query;
+		if ($typenow=='bug-library-bugs') {
+			$taxonomy = 'bug-library-products';
+			$product_taxonomy = get_taxonomy($taxonomy);
+			wp_dropdown_categories(array(
+				'show_option_all' =>  __("Show All {$product_taxonomy->label}"),
+				'taxonomy'        =>  $taxonomy,
+				'name'            =>  'bug-library-products',
+				'orderby'         =>  'name',
+				'selected'        =>  $wp_query->query['bug-library-products'],
+				'hierarchical'    =>  true,
+				'depth'           =>  3,
+				'show_count'      =>  false, // Show # listings in parens
+				'hide_empty'      =>  true, // Don't show businesses w/o listings
+			));
+			
+			$taxonomy = 'bug-library-types';
+			$product_taxonomy = get_taxonomy($taxonomy);
+			wp_dropdown_categories(array(
+				'show_option_all' =>  __("Show All {$product_taxonomy->label}"),
+				'taxonomy'        =>  $taxonomy,
+				'name'            =>  'bug-library-types',
+				'orderby'         =>  'name',
+				'selected'        =>  $wp_query->query['bug-library-types'],
+				'hierarchical'    =>  true,
+				'depth'           =>  3,
+				'show_count'      =>  false, // Show # listings in parens
+				'hide_empty'      =>  true, // Don't show businesses w/o listings
+			));
+			
+			$taxonomy = 'bug-library-status';
+			$product_taxonomy = get_taxonomy($taxonomy);
+			wp_dropdown_categories(array(
+				'show_option_all' =>  __("Show All {$product_taxonomy->label}"),
+				'taxonomy'        =>  $taxonomy,
+				'name'            =>  'bug-library-status',
+				'orderby'         =>  'name',
+				'selected'        =>  $wp_query->query['bug-library-status'],
+				'hierarchical'    =>  true,
+				'depth'           =>  3,
+				'show_count'      =>  false, // Show # listings in parens
+				'hide_empty'      =>  true, // Don't show businesses w/o listings
+			));
+		}
 	}
 	
-	function bug_library_view_product_column_orderby( $vars ) {
-		if ( isset( $vars['orderby'] ) && 'bug-library-view-product' == $vars['orderby'] ) {
-			$vars = array_merge( $vars, array(
-				'meta_key' => 'bug-library-view-product',
-				'orderby' => 'meta_value'
-			) );
+	function convert_product_id_to_taxonomy_term_in_query($query) {
+		global $pagenow;
+		$qv = &$query->query_vars;
+		
+		if ($pagenow=='edit.php' &&
+				isset($qv['bug-library-products']) && is_numeric($qv['bug-library-products'])) {
+			
+			$term = get_term_by('id',$qv['bug-library-products'],'bug-library-products');
+			$qv['bug-library-products'] = $term->slug;
 		}
-	 
-		return $vars;
-	} */
+		
+		if ($pagenow=='edit.php' &&
+				isset($qv['bug-library-types']) && is_numeric($qv['bug-library-types'])) {
+			
+			$term = get_term_by('id',$qv['bug-library-types'],'bug-library-types');
+			$qv['bug-library-types'] = $term->slug;
+		}
+
+		if ($pagenow=='edit.php' &&
+				isset($qv['bug-library-status']) && is_numeric($qv['bug-library-status'])) {
+			
+			$term = get_term_by('id',$qv['bug-library-status'],'bug-library-status');
+			$qv['bug-library-status'] = $term->slug;
+		}
+	}
 	
 	function bug_library_edit_bug_details($bug)
 	{
@@ -457,45 +509,54 @@ class bug_library_plugin {
 	function add_bug_field($ID = false, $post = false) {
 		if ($post->post_type = 'bug-library-bugs')
 		{
-			$productterm = get_term_by( 'id', $_POST['bug-library-product'], "bug-library-products");
-			if ($productterm)
+			if (isset($_POST['bug-library-product']))
 			{
-				wp_set_post_terms( $post->ID, $productterm->name, "bug-library-products" );
+				$productterm = get_term_by( 'id', $_POST['bug-library-product'], "bug-library-products");
+				if ($productterm)
+				{
+					wp_set_post_terms( $post->ID, $productterm->name, "bug-library-products" );
+				}
 			}
 			
-			$statusterm = get_term_by( 'id', $_POST['bug-library-status'], "bug-library-status");
-			if ($statusterm)
+			if (isset($_POST['bug-library-status']))
 			{
-				wp_set_post_terms( $post->ID, $statusterm->name, "bug-library-status" );
+				$statusterm = get_term_by( 'id', $_POST['bug-library-status'], "bug-library-status");
+				if ($statusterm)
+				{
+					wp_set_post_terms( $post->ID, $statusterm->name, "bug-library-status" );
+				}
 			}
 			
-			$typeterm = get_term_by( 'id', $_POST['bug-library-types'], "bug-library-types");
-			if ($typeterm)
+			if (isset($_POST['bug-library-types']))
 			{
-				wp_set_post_terms( $post->ID, $typeterm->name, "bug-library-types" );
+				$typeterm = get_term_by( 'id', $_POST['bug-library-types'], "bug-library-types");
+				if ($typeterm)
+				{
+					wp_set_post_terms( $post->ID, $typeterm->name, "bug-library-types" );
+				}
 			}
 			
-			if ($_POST['bug-library-product-version'] != '')
+			if (isset($_POST['bug-library-product-version']) && $_POST['bug-library-product-version'] != '')
 			{
 				update_post_meta($post->ID, "bug-library-product-version", $_POST['bug-library-product-version']);
 			}
 			
-			if ($_POST['bug-library-reporter-name'] != '')
+			if (isset($_POST['bug-library-reporter-name']) && $_POST['bug-library-reporter-name'] != '')
 			{
 				update_post_meta($post->ID, "bug-library-reporter-name", $_POST['bug-library-reporter-name']);
 			}
 			
-			if ($_POST['bug-library-reporter-email'] != '')
+			if (isset($_POST['bug-library-reporter-email']) && $_POST['bug-library-reporter-email'] != '')
 			{
 				update_post_meta($post->ID, "bug-library-reporter-email", $_POST['bug-library-reporter-email']);
 			}
 			
-			if ($_POST['bug-library-resolution-date'] != '')
+			if (isset($_POST['bug-library-resolution-date']) && $_POST['bug-library-resolution-date'] != '')
 			{
 				update_post_meta($post->ID, "bug-library-resolution-date", $_POST['bug-library-resolution-date']);
 			}
 			
-			if ($_POST['bug-library-resolution-version'] != '')
+			if (isset($_POST['bug-library-resolution-version']) && $_POST['bug-library-resolution-version'] != '')
 			{
 				update_post_meta($post->ID, "bug-library-resolution-version", $_POST['bug-library-resolution-version']);
 			}

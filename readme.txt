@@ -26,6 +26,10 @@ This plugin provides an easy way to incorporate a bug/enhancement tracking syste
 
 == Changelog ==
 
+= 1.0.1=
+* Added filters in admin bug list page to filters bugs by type, status and product
+* Corrected problem with product, status and type getting deleted if you quick edited a bug
+
 = 1.0 =
 * First release of Bug Library
 
