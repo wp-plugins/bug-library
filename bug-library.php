@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.0.1
+Version: 1.0.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -102,7 +102,7 @@ class bug_library_plugin {
 		$blpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
 
 		// Load text domain for translation of admin pages and text strings
-		load_plugin_textdomain( 'bug-library', $llpluginpath . '/languages', 'bug-library/languages');
+		load_plugin_textdomain( 'bug-library', $blpluginpath . '/languages', 'bug-library/languages');
 	}
 
 	/************************** Bug Library Installation Function **************************/
@@ -507,7 +507,7 @@ class bug_library_plugin {
 	}
 	
 	function add_bug_field($ID = false, $post = false) {
-		if ($post->post_type = 'bug-library-bugs')
+		if ($post->post_type == 'bug-library-bugs')
 		{
 			if (isset($_POST['bug-library-product']))
 			{
