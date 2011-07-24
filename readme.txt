@@ -26,6 +26,9 @@ This plugin provides an easy way to incorporate a bug/enhancement tracking syste
 
 == Changelog ==
 
+= 1.0.3 =
+* Added options to make the reporter name and reporter e-mail required fields in the user issue submission form
+
 = 1.0.2 =
 * Corrected variable with bad name
 

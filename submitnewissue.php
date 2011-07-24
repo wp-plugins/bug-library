@@ -25,7 +25,7 @@
 	
 	if (isset($_POST['new-bug-submit']))
 	{
-		if ($_POST['new-bug-title'] != '' && $_POST['new-bug-version'] != '' && $_POST['new-bug-desc'] != '')
+		if ($_POST['new-bug-title'] != '' && $_POST['new-bug-version'] != '' && $_POST['new-bug-desc'] != '' && (($genoptions['requirename'] == false) || ($genoptions['requirename'] == true && $_POST['new-bug-reporter-name'] != '') && ($genoptions['requireemail'] == false || ($genoptions['requireemail'] == true && $_POST['new-bug-reporter-email'] != ''))))
 		{
 			if ($genoptions['showcaptcha'] == true)
 			{
@@ -238,12 +238,12 @@ Description <span id='required'>*</span><br />
 </div>
 
 <div id='new-bug-name-section'>
-Issue Reporter Name (optional)<br />
+Issue Reporter Name<?php if ($genoptions['requirename'] == false) echo " (optional)"; else echo " <span id='required'>*</span>"; ?><br />
 <input type='text' id='new-bug-reporter-name' name='new-bug-reporter-name' size='60' <?php if ($valid == 0) echo "value='" . $_POST['new-bug-reporter-name'] . "'"; ?> />
 </div>
 
 <div id='new-bug-email-section'>
-Issue Reported E-mail (optional, for update notifications only)<br />
+Issue Reported E-mail<?php if ($genoptions['requireemail'] == false) echo " (optional, for update notifications only)"; else echo " <span id='required'>*</span>";?><br />
 <input type='text' id='new-bug-reporter-email' name='new-bug-reporter-email' size='60' <?php if ($valid == 0) echo "value='" . $_POST['new-bug-reporter-email'] . "'"; ?> />
 </div>
 

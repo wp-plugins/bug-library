@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.0.2
+Version: 1.0.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -507,7 +507,7 @@ class bug_library_plugin {
 	}
 	
 	function add_bug_field($ID = false, $post = false) {
-		if ($post->post_type == 'bug-library-bugs')
+		if ($post->post_type = 'bug-library-bugs')
 		{
 			if (isset($_POST['bug-library-product']))
 			{
@@ -604,7 +604,9 @@ class bug_library_plugin {
 		$genoptions['bugnotifytitle'] = __('New bug added to Wordpress Bug Library: %bugtitle%', 'bug-library');
 		$genoptions['permalinkpageid'] = -1;
 		$genoptions['firstrowheaders'] = false;
-		
+		$genoptions['requirename'] = false;
+		$genoptions['requireemail'] = false;
+	
 		$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/bug-library/stylesheet.css';
 		$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
 
@@ -932,7 +934,7 @@ class bug_library_plugin {
 				}
 			}
 
-			foreach (array('moderatesubmissions', 'showcaptcha', 'requirelogin', 'newbugadminnotify', 'firstrowheaders') as $option_name) {
+			foreach (array('moderatesubmissions', 'showcaptcha', 'requirelogin', 'newbugadminnotify', 'firstrowheaders', 'requirename', 'requireemail') as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$genoptions[$option_name] = true;
 				} else {
@@ -1066,6 +1068,13 @@ class bug_library_plugin {
 				<td></td>
 				<td>Require login to submit new issues</td>
 				<td><input type="checkbox" id="requirelogin" name="requirelogin" <?php if ($genoptions['requirelogin']) echo ' checked="checked" '; ?>/></td>
+			</tr>
+			<tr>
+				<td>Require Reporter Name</td>
+				<td><input type="checkbox" id="requirename" name="requirename" <?php if ($genoptions['requirename']) echo ' checked="checked" '; ?>/></td>
+				<td></td>
+				<td>Require Product Version</td>
+				<td><input type="checkbox" id="requireemail" name="requireemail" <?php if ($genoptions['requireemail']) echo ' checked="checked" '; ?>/></td>
 			</tr>
 			<tr>
 				<td>Default user bug status</td>
