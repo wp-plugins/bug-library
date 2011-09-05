@@ -248,7 +248,7 @@ Issue Reported E-mail<?php if ($genoptions['requireemail'] == false) echo " (opt
 </div>
 
 <?php if ($genoptions['allowattach']): ?>
-Upload Image<br />
+Attach File<br />
 <input type="file" name="attachimage" id="attachimage" /> 
 <?php endif; ?>
 

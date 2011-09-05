@@ -69,8 +69,8 @@ get_header(); ?>
 							<?php endif; ?>
 							
 							<?php 	if ($imagepath != '') {
-										echo "Image Attachment<br /><br />";
-										echo "<img src='" . $imagepath . "' /><br />";
+										echo "File Attachment<br /><br />";
+										echo "<a href='" . $imagepath . "'>Attached File</a><br />";
 									}
 							?>
 							</td>

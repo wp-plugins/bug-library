@@ -26,6 +26,9 @@ This plugin provides an easy way to incorporate a bug/enhancement tracking syste
 
 == Changelog ==
 
+= 1.1.1 =
+* Changed Upload Image option to Upload File. Changed code that displayed image to become link to attached file.
+
 = 1.0.3 =
 * Added options to make the reporter name and reporter e-mail required fields in the user issue submission form
 
