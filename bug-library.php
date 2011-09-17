@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.1.1
+Version: 1.1.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -558,6 +558,8 @@ class bug_library_plugin {
 			echo "<select name='bug-library-status' style='width: 400px'>\n";
 			foreach ($statusterms as $statusterm)
 			{
+				$selectedterm = '';
+				
 				if ($statuses[0]->term_id != '')
 				{
 					if ($statuses[0]->term_id == $statusterm->term_id)
@@ -568,8 +570,6 @@ class bug_library_plugin {
 					if ($genoptions['defaultuserbugstatus'] == $statusterm->term_id)
 						$selectedterm = "selected='selected'";
 				}
-				else
-					$selectedterm = '';
 					
 				echo "<option value='" . $statusterm->term_id . "' " . $selectedterm . ">" . $statusterm->name . "</option>\n";
 			}		
@@ -1534,7 +1534,7 @@ class bug_library_plugin {
 		$bugquery .= "terms st ON tts.term_id = st.term_id LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships trt ON bugs.ID = trt.object_id ";
 		$bugquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_taxonomy ttt ON trt.term_taxonomy_id = ttt.term_taxonomy_id LEFT JOIN " . $wpdb->get_blog_prefix();
 		$bugquery .= "terms tt ON ttt.term_id = tt.term_id LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships trpr ON bugs.ID = trpr.object_id ";
-		$bugquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_taxonomy ttpr ON trpr.term_taxonomy_id = ttpr.term_taxonomy_id LEFT JOIN " . $wpdb->get_blog_prefix();
+		$bugquery .= "LEFT OUTER JOIN " . $wpdb->get_blog_prefix() . "term_taxonomy ttpr ON trpr.term_taxonomy_id = ttpr.term_taxonomy_id LEFT OUTER JOIN " . $wpdb->get_blog_prefix();
 		$bugquery .= "terms tpr ON ttpr.term_id = tpr.term_id ";
 		
 		$bugquery .= "WHERE bugs.post_type = 'bug-library-bugs' AND ttp.taxonomy = 'bug-library-products' ";
