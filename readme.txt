@@ -21,10 +21,25 @@ This plugin provides an easy way to incorporate a bug/enhancement tracking syste
 1. Upload the extracted folder to the /wp-content/plugins/ directory
 1. Activate the plugin in the Wordpress Admin
 1. To get a basic Bug Library list showing on one of your Wordpress pages, create a new page and type the following text: [bug-library]
+
+There are a number of optional arguments that can be specified with the shortcode. Here they are with examples for each:
+
+[bug-library bugcategorylist='3,4,5'] = List of bug categories to display
+[bug-library bugtypeid='4'] = List of bugs from a specific category
+[bug-library bugstatusid='5'] = List of bugs that have a specific status
+[bug-library bugpriorityid='6'] = List of bugs that have a specific priority
+
+These shortcode options can be combined:
+
+[bug-library bugcategorylist='3,4,5' bugtypeid='4' bugstatusid='5' bugpriorityid='6']
+
 1. Configure the Bug Library General Options section for more control over the plugin functionality.
 1. Copy the file single-bug-library-bugs.php from the bug-library plugin directory to your theme directory to display all information related to your bugs. You might have to edit this file a bit and compare it to single.php to get the proper layout to show up on your web site.
 
 == Changelog ==
+
+= 1.2 =
+* Added options to shortcode to allow users to specify bug priority, type and status as arguments
 
 = 1.1.2 =
 * Fixed issue with status field not display correct entry when editing bugs

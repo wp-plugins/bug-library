@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.1.2
+Version: 1.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1464,13 +1464,13 @@ class bug_library_plugin {
 	}
 
 	function BugLibrary($entriesperpage = 10, $moderatesubmissions = true, $bugcategorylist = '', $requirelogin = false, $permalinkpageid = -1,
-						$showpriority = false, $showreporter = false, $showassignee = false) {
+						$showpriority = false, $showreporter = false, $showassignee = false, $shortcodebugtypeid = '', $shortcodebugstatusid = '', $shortcodebugpriorityid = '') {
 
 		global $wpdb, $blpluginpath;
 		
 		if (isset($_GET['bugid']))
 		{
-			$bugid = $_GET['bugid'];
+			$bugid = intval($_GET['bugid']);
 			$view = 'single';
 		}
 		else
@@ -1480,7 +1480,7 @@ class bug_library_plugin {
 			
 			if (isset($_GET['bugpage']))
 			{
-				$pagenumber = $_GET['bugpage'];
+				$pagenumber = intval($_GET['bugpage']);
 			}
 			else
 			{
@@ -1489,7 +1489,7 @@ class bug_library_plugin {
 			
 			if (isset($_GET['bugcatid']))
 			{
-				$bugcatid = $_GET['bugcatid'];			
+				$bugcatid = intval($_GET['bugcatid']);			
 			}
 			else
 			{
@@ -1498,26 +1498,38 @@ class bug_library_plugin {
 			
 			if (isset($_GET['bugtypeid']))
 			{
-				$bugtypeid = $_GET['bugtypeid'];
+                            $bugtypeid = intval($_GET['bugtypeid']);
 			}
+                        elseif ($shortcodebugtypeid != '')
+                        {
+                            $bugtypeid = $shortcodebugtypeid;
+                        }
 			else
 			{
-				$bugtypeid = -1;
+                            $bugtypeid = -1;
 			}
 			
 			if (isset($_GET['bugstatusid']))
 			{
-				$bugstatusid = $_GET['bugstatusid'];
+                            $bugstatusid = intval($_GET['bugstatusid']);
 			}
+                        elseif ($shortcodebugstatusid != '')
+                        {
+                            $bugstatusid = $shortcodebugstatusid;
+                        }
 			else
 			{
-				$bugstatusid = -1;
+                            $bugstatusid = -1;
 			}
 			
 			if (isset($_GET['bugpriorityid']))
 			{
-				$bugpriorityid = $_GET['bugpriorityid'];
+				$bugpriorityid = intval($_GET['bugpriorityid']);
 			}
+                        elseif ($shortcodebugpriorityid != '')
+                        {
+                            $bugpriorityid = $shortcodepriorityid;
+                        }
 			else
 			{
 				$bugpriorityid = -1;
@@ -2012,12 +2024,15 @@ class bug_library_plugin {
 	function bug_library_func($atts) {
 		extract(shortcode_atts(array(
 			'bugcategorylist' => '',
+                        'bugtypeid' => '',
+                        'bugstatusid' => '',
+                        'bugpriorityid' => ''
 		), $atts));
 		
 		$genoptions = get_option('BugLibraryGeneral');
 				
 		return $this->BugLibrary($genoptions['entriesperpage'], $genoptions['moderatesubmissions'], $bugcategorylist, $genoptions['requirelogin'],
-								$genoptions['permalinkpageid'], $genoptions['showpriority'], $genoptions['showreporter'], $genoptions['showassignee']); 
+								$genoptions['permalinkpageid'], $genoptions['showpriority'], $genoptions['showreporter'], $genoptions['showassignee'], $bugtypeid, $bugstatusid, $bugpriorityid); 
 	}
 	
 	
