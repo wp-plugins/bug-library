@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.1 =
+* Update to ensure compatibility with WordPress 3.3
+
 = 1.2 =
 * Added options to shortcode to allow users to specify bug priority, type and status as arguments
 

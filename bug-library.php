@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.2
+Version: 1.2.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -39,7 +39,6 @@ define('BLDIR', dirname(__FILE__) . '/');
 if ( !defined('WP_ADMIN_URL') )
 	define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
 	
-require_once(ABSPATH . '/wp-admin/includes/template.php');
 require_once(BLDIR . '/wp-admin-menu-classes.php');
 
 $pagehooktop = "";
@@ -67,6 +66,8 @@ class bug_library_plugin {
 		add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
 		//register callback for admin menu  setup
 		add_action('admin_menu', array($this, 'on_admin_menu')); 
+                
+                add_action('admin_init', array($this, 'admin_init')); 
 		//register the callback been used if options of page been submitted and needs to be processed
 		add_action('admin_post_save_bug_library_general', array($this, 'on_save_changes_general'));
 		add_action('admin_post_save_bug_library_stylesheet', array($this, 'on_save_changes_stylesheet'));
@@ -90,8 +91,6 @@ class bug_library_plugin {
 		
 		add_action('save_post', array($this, 'add_bug_field'), 10, 2);
 		add_action('delete_post', array($this, 'delete_bug_field'));
-		
-		add_meta_box('buglibrary_edit_bug_meta_box', __('Bug Details', 'bug-library'), array($this, 'bug_library_edit_bug_details'), 'bug-library-bugs', 'normal', 'high');
 		
 		add_action('admin_menu', array($this, 'my_admin_menu'));
 		
@@ -158,6 +157,10 @@ class bug_library_plugin {
 			}
 		}
 	}
+        
+        function admin_init() {
+            add_meta_box('buglibrary_edit_bug_meta_box', __('Bug Details', 'bug-library'), array($this, 'bug_library_edit_bug_details'), 'bug-library-bugs', 'normal', 'high');
+        }
 	
 	function my_admin_menu() {
 		add_admin_menu_item('Bugs',array(                       // (Another way to get a 'Add Actor' Link to a section.)
