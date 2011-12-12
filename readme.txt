@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.2 =
+* Removed reference to non-existent table in admin menu code
+
 = 1.2.1 =
 * Update to ensure compatibility with WordPress 3.3
 

@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.2.1
+Version: 1.2.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -856,14 +856,6 @@ class bug_library_plugin {
 	function on_admin_menu() {
 		//add our own option page, you can also add it to different sections or use your own one
 		global $wpdb, $blpluginpath, $pagehooktop, $pagehookstylesheet, $pagehookinstructions;
-
-		$bugmoderatecount = 0;
-		
-		$bugmoderatequery = "SELECT count(*) ";
-		$bugmoderatequery .= "FROM " . $wpdb->prefix . "bugs_items b ";
-		$bugmoderatequery .= "WHERE b.visible = 'N' ";
-
-		$bugmoderatecount = $wpdb->get_var($bugmoderatequery);
 		
 		$pagehooktop = add_menu_page(__('Bug Library General Options', 'bug-library'), "Bug Library", 'manage_options', BUG_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $blpluginpath . '/icons/bug-icon.png');
 				
