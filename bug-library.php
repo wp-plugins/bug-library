@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.2.2
+Version: 1.2.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -977,14 +977,14 @@ class bug_library_plugin {
 			// close postboxes that should be closed
 			jQuery('.if-js-closed').removeClass('if-js-closed').addClass('closed');
 			// postboxes setup
-			postboxes.add_postbox_toggles('<?php 
+			postboxes.add_postbox_toggles(<?php 
 				if ($_GET['page'] == 'bug-library')
 					echo $pagehooktop;
 				elseif ($_GET['page'] == 'bug-library-stylesheet')
 					echo $pagehookstylesheet;
 				elseif ($_GET['page'] == 'bug-library-instructions')
 					echo $pagehookinstructions;
-				?>');
+				?>);
 				
 			jQuery('.bltooltip').each(function()
 						{
@@ -1999,16 +1999,18 @@ class bug_library_plugin {
 		
 		$output .= "</div>";
 		
-		$output .= "<SCRIPT LANGUAGE='JavaScript'>\n";
-		$output .= "jQuery(document).ready(function() {\n";
-		$output .= "\tjQuery('#bug-library-filterchange').click(function() { jQuery('#bug-library-filters').slideToggle('slow'); });\n";
+		$output .= "<SCRIPT LANGUAGE='JavaScript'>";
+		$output .= "/* <![CDATA[ */";
+		$output .= "jQuery(document).ready(function() {";
+		$output .= "\tjQuery('#bug-library-filterchange').click(function() { jQuery('#bug-library-filters').slideToggle('slow'); });";
 		
 		if ($bugcatid != -1)
 			$querystring = "?bugcatid=" . $bugcatid;
 		
-		$output .= "\tjQuery('#submitnewissue').colorbox({href:'" . $blpluginpath . "submitnewissue.php" . $querystring . "', opacity: 0.3, iframe:true, width:'570px', height:'660px'});\n";
-		$output .= "});\n";
-		$output .= "</SCRIPT>\n";
+		$output .= "\tjQuery('#submitnewissue').colorbox({href:'" . $blpluginpath . "submitnewissue.php" . $querystring . "', opacity: 0.3, iframe:true, width:'570px', height:'660px'});";
+		$output .= "});";
+		$output .= "/* ]]> */";
+		$output .= "</SCRIPT>";
 		
 		return $output;
 	}

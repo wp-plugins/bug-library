@@ -38,6 +38,10 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.3 =
+* Added CDATA tags around javascript code
+* Removed unnecessary quotes around PHP code to render meta boxes
+
 = 1.2.2 =
 * Removed reference to non-existent table in admin menu code
 
