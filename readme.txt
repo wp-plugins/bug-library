@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.4 =
+* Added code to make sure that post data is available when saving custom bug data
+
 = 1.2.3 =
 * Added CDATA tags around javascript code
 * Removed unnecessary quotes around PHP code to render meta boxes
