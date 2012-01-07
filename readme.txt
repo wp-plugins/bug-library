@@ -38,6 +38,10 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.5 =
+* Added field to define default user bug priority in configuration panel
+* New user reported issues now have a priority so they can appear in the list
+
 = 1.2.4 =
 * Added code to make sure that post data is available when saving custom bug data
 

@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.2.4
+Version: 1.2.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -616,11 +616,19 @@ class bug_library_plugin {
 			echo "<select name='bug-library-priority' style='width: 400px'>\n";
 			foreach ($prioritiesterms as $priorityterm)
 			{
-				
+                            $selectedterm = '';
+                            if ($priorities[0]->term_id != '')
+                            {				
 				if ($priorities[0]->term_id == $priorityterm->term_id)
 					$selectedterm = "selected='selected'";
-				else
-					$selectedterm = '';
+                            }
+                            elseif ($priorities[0]->term_id == '' && $genoptions['defaultuserbugpriority'] != '')
+                            {
+                                    if ($genoptions['defaultuserbugpriority'] == $priorityterm->term_id)
+                                            $selectedterm = "selected='selected'";
+                            }
+                                   
+					
 					
 				echo "<option value='" . $priorityterm->term_id . "' " . $selectedterm . ">" . $priorityterm->name . "</option>\n";
 			}		
@@ -814,6 +822,7 @@ class bug_library_plugin {
 		$genoptions['entriesperpage'] = 10;
 		$genoptions['allowattach'] = false;
 		$genoptions['defaultuserbugstatus'] = 'Default Status';
+                $genoptions['defaultuserbugstatus'] = 'Default Priority';
 		$genoptions['newbugadminnotify'] = true;
 		$genoptions['bugnotifytitle'] = __('New bug added to Wordpress Bug Library: %bugtitle%', 'bug-library');
 		$genoptions['permalinkpageid'] = -1;
@@ -1111,6 +1120,9 @@ class bug_library_plugin {
 		{
 			$statusterm = get_term_by('id', $_POST['bug-library-status'], 'bug-library-status');
 			$genoptions['defaultuserbugstatus'] = $statusterm->name;
+                        
+                        $priorityterm = get_term_by('id', $_POST['bug-library-priority'], 'bug-library-priority');
+			$genoptions['defaultuserbugpriority'] = $priorityterm->name;
 			
 			if ($genoptions['allowattach'] == false && $_POST['allowattach'] == true)
 			{
@@ -1369,7 +1381,29 @@ class bug_library_plugin {
 					</select>
 				<?php endif; ?>
 				</td>
-				<td></td>
+                                <td></td>
+				<td>Default user bug priority</td>
+				<td>
+				
+				<?php $priorityterms = get_terms('bug-library-priority', 'orderby=name&hide_empty=0');
+		
+				if ($priorityterms): ?>
+					<select name='bug-library-priority' style='width: 200px'>
+					<?php foreach ($priorityterms as $priorityterm):					
+						if ($priorityterm->name == $genoptions['defaultuserbugpriority'])
+						{
+							$selectedterm = "selected='selected'";
+						}
+						else
+						{
+							$selectedterm = '';
+						} ?>
+							
+						<option value='<?php echo $priorityterm->term_id; ?>' <?php echo $selectedterm; ?>><?php echo $priorityterm->name; ?></option>
+					<?php endforeach; ?>
+					</select>
+				<?php endif; ?>
+				</td>
 			</tr>
 			<tr>
 				<td>Notify admin of new bugs</td>
@@ -1647,7 +1681,6 @@ class bug_library_plugin {
 				if (($bugcatid != -1) || ($bugtypeid != -1) || ($bugstatusid != -1))
 					$output .= ", ";
 				$priorities = get_term_by( 'id', $bugpriorityid, "bug-library-priority", ARRAY_A);
-				print_r($priorities);
 				$output .= "Priority (" . $priorities['name'] . ")";
 			}
 			

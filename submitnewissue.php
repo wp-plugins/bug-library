@@ -103,6 +103,8 @@
 				}
 				
 				wp_set_post_terms( $newbugid, $genoptions['defaultuserbugstatus'], "bug-library-status" );
+                                
+                                wp_set_post_terms( $newbugid, $genoptions['defaultuserbugpriority'], "bug-library-priority" );
 				
 				$typeterm = get_term_by( 'id', $_POST['new-bug-type'], "bug-library-types");
 				if ($typeterm)
