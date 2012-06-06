@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.6 =
+* Fixed uncaught reference error in javascript code
+
 = 1.2.5 =
 * Added field to define default user bug priority in configuration panel
 * New user reported issues now have a priority so they can appear in the list

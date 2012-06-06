@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.2.5
+Version: 1.2.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -987,14 +987,14 @@ class bug_library_plugin {
 			// close postboxes that should be closed
 			jQuery('.if-js-closed').removeClass('if-js-closed').addClass('closed');
 			// postboxes setup
-			postboxes.add_postbox_toggles(<?php 
+			postboxes.add_postbox_toggles('<?php 
 				if ($_GET['page'] == 'bug-library')
 					echo $pagehooktop;
 				elseif ($_GET['page'] == 'bug-library-stylesheet')
 					echo $pagehookstylesheet;
 				elseif ($_GET['page'] == 'bug-library-instructions')
 					echo $pagehookinstructions;
-				?>);
+				?>');
 				
 			jQuery('.bltooltip').each(function()
 						{
