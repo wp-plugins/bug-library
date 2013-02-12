@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.2.6
+Version: 1.2.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
