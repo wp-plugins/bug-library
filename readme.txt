@@ -38,8 +38,11 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.8 =
+* Updated colorbox script to fix problem with black box when submitting new issues in latest version of WordPress
+
 = 1.2.7 =
-* Updated jQuert datapicker script to fix problem with latest versions of WordPress
+* Updated jQuery datapicker script to fix problem with latest versions of WordPress
 
 = 1.2.6 =
 * Fixed uncaught reference error in javascript code
