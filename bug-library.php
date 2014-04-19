@@ -914,17 +914,17 @@ class bug_library_plugin {
 		}
 
 		// Check for current page to set some page=specific variables
-		if ($_GET['page'] == 'bug-library')
+		if (isset( $_GET['page']) && $_GET['page'] == 'bug-library')
 		{
-			if ($_GET['message'] == '1')
+			if (isset( $_GET['message']) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('General Settings Saved', 'bug-library') . ".</strong></p></div>";
-			elseif ($_GET['message'] == '2')
+			elseif (isset( $_GET['message']) && $_GET['message'] == '2')
 				echo  "<div id='message' class='updated fade'><p><strong>" . __('Please create a folder called uploads under your Wordpress /wp-content/ directory with write permissions to use this functionality.', 'bug-library') . ".</strong></p></div>";
-			elseif ($_GET['message'] == '3')
+			elseif (isset( $_GET['message']) && $_GET['message'] == '3')
 				echo  "<div id='message' class='updated fade'><p><strong>" . __('Please make sure that the /wp-content/uploads/ directory has write permissions to use this functionality.', 'bug-library') . ".</strong></p></div>";
-			elseif ($_GET['message'] == '4')
+			elseif (isset( $_GET['message']) && $_GET['message'] == '4')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Invalid column count for bug on row', 'bug-library') . "</strong></p></div>";
-			elseif ($_GET['message'] == '9')
+			elseif (isset( $_GET['message']) && $_GET['message'] == '9')
 				echo "<div id='message' class='updated fade'><p><strong>" . $_GET['importrowscount'] . " " . __('row(s) found', 'bug-library') . ". " . $_GET['successimportcount'] . " " . __('bugs(s) imported successfully', 'bugs-library') . ".</strong></p></div>";		
 				
 			$formvalue = 'save_bug_library_general';

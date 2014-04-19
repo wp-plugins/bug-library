@@ -4,7 +4,7 @@
 
 #bug-library-list table { width: 600px; border: none; border-spacing: 0; border-collapse: collapse; margin-top: 8px; }
 
-#bug-library-list a, a:visited { text-decoration: none; color: #0066CC }
+#bug-library-list a, #bug-library-list a:visited { text-decoration: none; color: #0066CC }
 
 #bug-library-list a:hover { text-decoration: none; color: #CC0000 }
 

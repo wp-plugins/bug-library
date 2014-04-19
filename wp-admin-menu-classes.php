@@ -192,6 +192,7 @@ class WP_AdminMenuSection {
 	}
 
 	function add_item($item,$args=array()) {
+        $last_index = '';
 		$args = wp_parse_args($args,array(
 			'where' => 'bottom' // top or bottom
 		));
