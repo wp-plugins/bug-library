@@ -1,15 +1,15 @@
+<?php
+require_once('../../../wp-load.php');
+require_once('bug-library.php');
+?>
 <head>
-<link rel="stylesheet" type="text/css" media="screen" href="<?php echo $blpluginpath; ?>stylesheet.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo plugins_url( 'stylesheet.css', __FILE__ ); ?>"/>
 </head>
 <body style='background-color: #FFFFFF;'>
 
-<?php 
-	require_once('../../../wp-load.php');
-	require_once('bug-library.php');
-	
+<?php
 	global $wpdb;
-	$blpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
-	
+
 	$genoptions = get_option('BugLibraryGeneral');
 
 	if (isset($_GET['bugcatid']))
@@ -88,11 +88,11 @@
 					'post_excerpt' => '',
 					'import_id' => 0,
 					'comment_status' => 'open',
-					'post_content' => wp_specialchars(stripslashes($_POST['new-bug-desc'])),
+					'post_content' => esc_html(stripslashes($_POST['new-bug-desc'])),
 					'post_date' => date("Y-m-d H:i:s", current_time('timestamp')),
 					'post_date_gmt' => date("Y-m-d H:i:s", current_time('timestamp', 1)),
 					'post_excerpt' => '',
-					'post_title' => wp_specialchars(stripslashes($_POST['new-bug-title'])));
+					'post_title' => esc_html(stripslashes($_POST['new-bug-title'])));
 
 				$newbugid = wp_insert_post( $new_bug_data );
 				
@@ -150,12 +150,12 @@
 					$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 					
 					$message = __('A user submitted a new bug to your Wordpress Bug database.', 'bug-library') . "<br /><br />";
-					$message .= __('Bug Title', 'bug-library') . ": " . wp_specialchars(stripslashes($_POST['new-bug-title'])) . "<br />";
-					$message .= __('Bug Description', 'bug-library') . ": " . wp_specialchars(stripslashes($_POST['new-bug-desc'])) . "<br />";
-					$message .= __('Bug Product', 'bug-library') . ": " . wp_specialchars(stripslashes($productterm->name)) . "<br />";
-					$message .= __('Bug Version', 'bug-library') . ": " . wp_specialchars(stripslashes($_POST['new-bug-version'])) . "<br />";
-					$message .= __('Bug Type', 'bug-library') . ": " . wp_specialchars(stripslashes($typeterm->name)) . "<br />";					
-					$message .= __('Reporter Name', 'bug-library') . ": " . wp_specialchars(stripslashes($_POST['new-bug-reporter-name'])) . "<br />";
+					$message .= __('Bug Title', 'bug-library') . ": " . esc_html(stripslashes($_POST['new-bug-title'])) . "<br />";
+					$message .= __('Bug Description', 'bug-library') . ": " . esc_html(stripslashes($_POST['new-bug-desc'])) . "<br />";
+					$message .= __('Bug Product', 'bug-library') . ": " . esc_html(stripslashes($productterm->name)) . "<br />";
+					$message .= __('Bug Version', 'bug-library') . ": " . esc_html(stripslashes($_POST['new-bug-version'])) . "<br />";
+					$message .= __('Bug Type', 'bug-library') . ": " . esc_html(stripslashes($typeterm->name)) . "<br />";
+					$message .= __('Reporter Name', 'bug-library') . ": " . esc_html(stripslashes($_POST['new-bug-reporter-name'])) . "<br />";
 					$message .= __('Reporter E-mail', 'bug-library') . ": " . $_POST['new-bug-reporter-email'] . "<br /><br />";
 					
 					if ($genoptions['moderatesubmissions'] == true)
@@ -168,7 +168,7 @@
 					if ($genoptions['bugnotifytitle'] != '')
 					{
 						$emailtitle = stripslashes($genoptions['bugnotifytitle']);
-						$emailtitle = str_replace('%bugtitle%', wp_specialchars(stripslashes($_POST['new-bug-title'])), $emailtitle);
+						$emailtitle = str_replace('%bugtitle%', esc_html(stripslashes($_POST['new-bug-title'])), $emailtitle);
 					}
 					else
 					{

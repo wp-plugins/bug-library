@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.2.8
+Version: 1.2.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -111,8 +111,7 @@ class bug_library_plugin {
 		
 		$productexist = $wpdb->get_var("select * from " . $wpdb->get_blog_prefix() . "term_taxonomy where taxonomy = 'bug-library-products'");
 				
-		if ($productterms == "")
-		{
+		if ( empty( $productexist ) ) {
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'terms', array( 'name' => 'Default Product', 'slug' => 'default-product', 'term_group' => 0 ) );
 			$producttermid = $wpdb->get_var("select term_id from " . $wpdb->get_blog_prefix() . "terms where name = 'Default Product'");
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'term_taxonomy', array( 'term_id' => $producttermid, 'taxonomy' => 'bug-library-products', 'description' => '', 'parent' => 0, 'count' => 0 ) );
@@ -120,8 +119,7 @@ class bug_library_plugin {
 		
 		$typeexist = $wpdb->get_var("select * from " . $wpdb->get_blog_prefix() . "term_taxonomy where taxonomy = 'bug-library-types'");
 		
-		if ($typeexist == "")
-		{
+		if ( empty( $typeexist ) ) {
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'terms', array( 'name' => 'Default Type', 'slug' => 'default-type', 'term_group' => 0 ) );
 			$typetermid = $wpdb->get_var("select term_id from " . $wpdb->get_blog_prefix() . "terms where name = 'Default Type'");
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'term_taxonomy', array( 'term_id' => $typetermid, 'taxonomy' => 'bug-library-types', 'description' => '', 'parent' => 0, 'count' => 0 ) );		
@@ -129,8 +127,7 @@ class bug_library_plugin {
 		
 		$statusexist = $wpdb->get_var("select * from " . $wpdb->get_blog_prefix() . "term_taxonomy where taxonomy = 'bug-library-status'");
 		
-		if ($statusexist == "")
-		{
+		if ( empty( $statusexist ) ) {
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'terms', array( 'name' => 'Default Status', 'slug' => 'default-status', 'term_group' => 0 ) );
 			$statustermid = $wpdb->get_var("select term_id from " . $wpdb->get_blog_prefix() . "terms where name = 'Default Status'");
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'term_taxonomy', array( 'term_id' => $statustermid, 'taxonomy' => 'bug-library-status', 'description' => '', 'parent' => 0, 'count' => 0 ) );		
@@ -138,8 +135,7 @@ class bug_library_plugin {
 		
 		$priorityexist = $wpdb->get_var("select * from " . $wpdb->get_blog_prefix() . "term_taxonomy where taxonomy = 'bug-library-priority'");
 		
-		if ($priorityexist == "")
-		{
+		if ( empty( $priorityexist ) ) {
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'terms', array( 'name' => 'Default Priority', 'slug' => 'default-priority', 'term_group' => 0 ) );
 			$prioritytermid = $wpdb->get_var("select term_id from " . $wpdb->get_blog_prefix() . "terms where name = 'Default Priority'");
 			$wpdb->insert( $wpdb->get_blog_prefix() . 'term_taxonomy', array( 'term_id' => $prioritytermid, 'taxonomy' => 'bug-library-priority', 'description' => '', 'parent' => 0, 'count' => 0 ) );
@@ -359,7 +355,7 @@ class bug_library_plugin {
 				'taxonomy'        =>  $taxonomy,
 				'name'            =>  'bug-library-products',
 				'orderby'         =>  'name',
-				'selected'        =>  $wp_query->query['bug-library-products'],
+				'selected'        =>  ( isset( $wp_query->query['bug-library-products'] ) ? $wp_query->query['bug-library-products'] : '' ),
 				'hierarchical'    =>  true,
 				'depth'           =>  3,
 				'show_count'      =>  false, // Show # listings in parens
@@ -373,7 +369,7 @@ class bug_library_plugin {
 				'taxonomy'        =>  $taxonomy,
 				'name'            =>  'bug-library-types',
 				'orderby'         =>  'name',
-				'selected'        =>  $wp_query->query['bug-library-types'],
+				'selected'        =>  ( isset( $wp_query->query['bug-library-types'] ) ? $wp_query->query['bug-library-types'] : '' ),
 				'hierarchical'    =>  true,
 				'depth'           =>  3,
 				'show_count'      =>  false, // Show # listings in parens
@@ -387,7 +383,7 @@ class bug_library_plugin {
 				'taxonomy'        =>  $taxonomy,
 				'name'            =>  'bug-library-status',
 				'orderby'         =>  'name',
-				'selected'        =>  $wp_query->query['bug-library-status'],
+				'selected'        =>  ( isset( $wp_query->query['bug-library-status'] ) ? $wp_query->query['bug-library-status'] : '' ),
 				'hierarchical'    =>  true,
 				'depth'           =>  3,
 				'show_count'      =>  false, // Show # listings in parens
@@ -401,7 +397,7 @@ class bug_library_plugin {
 				'taxonomy'        =>  $taxonomy,
 				'name'            =>  'bug-library-priority',
 				'orderby'         =>  'name',
-				'selected'        =>  $wp_query->query['bug-library-priority'],
+				'selected'        =>  ( isset ( $wp_query->query['bug-library-priority'] ) ? $wp_query->query['bug-library-priority'] : '' ),
 				'hierarchical'    =>  true,
 				'depth'           =>  3,
 				'show_count'      =>  false, // Show # listings in parens
@@ -616,19 +612,14 @@ class bug_library_plugin {
 			echo "<select name='bug-library-priority' style='width: 400px'>\n";
 			foreach ($prioritiesterms as $priorityterm)
 			{
-                            $selectedterm = '';
-                            if ($priorities[0]->term_id != '')
-                            {				
-				if ($priorities[0]->term_id == $priorityterm->term_id)
-					$selectedterm = "selected='selected'";
-                            }
-                            elseif ($priorities[0]->term_id == '' && $genoptions['defaultuserbugpriority'] != '')
-                            {
-                                    if ($genoptions['defaultuserbugpriority'] == $priorityterm->term_id)
-                                            $selectedterm = "selected='selected'";
-                            }
-                                   
-					
+				$selectedterm = '';
+                if ($priorities[0]->term_id != '') {
+					if ($priorities[0]->term_id == $priorityterm->term_id)
+						$selectedterm = "selected='selected'";
+                } elseif ($priorities[0]->term_id == '' && isset( $genoptions['defaultuserbugpriority'] ) ) {
+	                if ($genoptions['defaultuserbugpriority'] == $priorityterm->term_id)
+		                $selectedterm = "selected='selected'";
+                }
 					
 				echo "<option value='" . $priorityterm->term_id . "' " . $selectedterm . ">" . $priorityterm->name . "</option>\n";
 			}		
@@ -822,7 +813,7 @@ class bug_library_plugin {
 		$genoptions['entriesperpage'] = 10;
 		$genoptions['allowattach'] = false;
 		$genoptions['defaultuserbugstatus'] = 'Default Status';
-                $genoptions['defaultuserbugstatus'] = 'Default Priority';
+		$genoptions['defaultuserbugstatus'] = 'Default Priority';
 		$genoptions['newbugadminnotify'] = true;
 		$genoptions['bugnotifytitle'] = __('New bug added to Wordpress Bug Library: %bugtitle%', 'bug-library');
 		$genoptions['permalinkpageid'] = -1;
@@ -936,10 +927,11 @@ class bug_library_plugin {
 			
 			$pagetitle = "Bug Library Stylesheet Editor";
 			
-			if ($_GET['message'] == '1')
+			if ( isset( $_GET['message'] ) && $_GET['message'] == '1') {
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet updated', 'link-library') . ".</strong></p></div>";
-			elseif ($_GET['message'] == '2')
-				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet reset to original state', 'link-library') . ".</strong></p></div>";	
+			} elseif (isset( $_GET['message'] ) && $_GET['message'] == '2') {
+				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet reset to original state', 'link-library') . ".</strong></p></div>";
+			}
 		}
 		elseif ($_GET['page'] == 'bug-library-instructions')
 		{
@@ -1017,6 +1009,8 @@ class bug_library_plugin {
 			wp_die( __('Not allowed', 'bug-library') );			
 		//cross check the given referer
 		check_admin_referer('bug-library');
+
+		$message = '';
 
 		$genoptions = get_option('BugLibraryGeneral');
 		
@@ -1121,10 +1115,10 @@ class bug_library_plugin {
 			$statusterm = get_term_by('id', $_POST['bug-library-status'], 'bug-library-status');
 			$genoptions['defaultuserbugstatus'] = $statusterm->name;
                         
-                        $priorityterm = get_term_by('id', $_POST['bug-library-priority'], 'bug-library-priority');
+			$priorityterm = get_term_by('id', $_POST['bug-library-priority'], 'bug-library-priority');
 			$genoptions['defaultuserbugpriority'] = $priorityterm->name;
 			
-			if ($genoptions['allowattach'] == false && $_POST['allowattach'] == true)
+			if ( !isset( $genoptions['allowattach'] ) && $_POST['allowattach'] == true)
 			{
 				$uploads = wp_upload_dir();
 				
@@ -1146,7 +1140,7 @@ class bug_library_plugin {
 					$genoptions['allowattach'] = true;
 				}			
 			}
-			elseif ($_POST['allowattach'] == false)
+			elseif ( isset( $_POST['allowattach'] ) && $_POST['allowattach'] == false )
 			{
 				$genoptions['allowattach'] = false;
 			}
@@ -1168,14 +1162,14 @@ class bug_library_plugin {
 
 			update_option('BugLibraryGeneral', $genoptions);
 			
-			if ($message == '') $message = 1;
+			if ( $message == '') $message = 1;
 		}
 				
 		global $wp_rewrite;
 		$wp_rewrite->flush_rules();
 		
 		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
-		wp_redirect($this->remove_querystring_var($_POST['_wp_http_referer'], 'message') . "&message=" . $message . ($row != 0 ? "&importrowscount=" . $row : '') . ($successfulimport != 0 ? "&successimportcount=" . $successfulimport : ""));
+		wp_redirect($this->remove_querystring_var($_POST['_wp_http_referer'], 'message') . "&message=" . $message . ( isset( $row ) && $row != 0 ? "&importrowscount=" . $row : '') . ($successfulimport != 0 ? "&successimportcount=" . $successfulimport : ""));
 	}
 
 		//executed if the post arrives initiated by pressing the submit button of form
@@ -1389,8 +1383,8 @@ class bug_library_plugin {
 		
 				if ($priorityterms): ?>
 					<select name='bug-library-priority' style='width: 200px'>
-					<?php foreach ($priorityterms as $priorityterm):					
-						if ($priorityterm->name == $genoptions['defaultuserbugpriority'])
+					<?php foreach ($priorityterms as $priorityterm):
+						if ( isset( $genoptions['defaultuserbugpriority'] ) && $priorityterm->name == $genoptions['defaultuserbugpriority'])
 						{
 							$selectedterm = "selected='selected'";
 						}
@@ -2037,7 +2031,9 @@ class bug_library_plugin {
 		$output .= "/* <![CDATA[ */";
 		$output .= "jQuery(document).ready(function() {";
 		$output .= "\tjQuery('#bug-library-filterchange').click(function() { jQuery('#bug-library-filters').slideToggle('slow'); });";
-		
+
+		$querystring = '';
+
 		if ($bugcatid != -1)
 			$querystring = "?bugcatid=" . $bugcatid;
 		

@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.2.9 =
+* Corrected PHP warnings
+
 = 1.2.8 =
 * Updated colorbox script to fix problem with black box when submitting new issues in latest version of WordPress
 
