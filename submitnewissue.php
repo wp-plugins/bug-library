@@ -1,7 +1,3 @@
-<?php
-require_once('../../../wp-load.php');
-require_once('bug-library.php');
-?>
 <head>
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo plugins_url( 'stylesheet.css', __FILE__ ); ?>"/>
 </head>
@@ -198,7 +194,7 @@ require_once('bug-library.php');
 	
 	
 
-<form name="input" action="<?php echo $blpluginpath; ?>submitnewissue.php" enctype="multipart/form-data" method="POST">
+<form name="input" action="<?php echo home_url(); ?>?bug_library_popup_content=true" enctype="multipart/form-data" method="POST">
 <div id='new-bug-form-title'><h2>Submit a new issue</h2></div>
 
 <div id='new-bug-title-section'>Issue Title <span id='required'>*</span><br />
@@ -255,7 +251,7 @@ Attach File<br />
 <?php endif; ?>
 
 <?php if ($genoptions['showcaptcha']): ?>
-	<div id='new-bug-captcha'><span id='captchaimage'><img src='<?php echo $blpluginpath . "captcha/easycaptcha.php"; ?>' /></span><br />
+	<div id='new-bug-captcha'><span id='captchaimage'><img src='<?php echo plugins_url( "captcha/easycaptcha.php", __FILE__ ); ?>' /></span><br />
 	<?php _e('Enter code from above image', 'bug-library'); ?><input type='text' name='confirm_code' />
 	</div>
 <?php endif; ?>
@@ -268,7 +264,7 @@ Attach File<br />
 <div id='bug-library-submissionaccepted'>
 <h2>Thank you for your submission.</h2><br /><br />
 <?php if ($genoptions['moderatesubmissions'] == 'true') echo "Your new issue will appear on the site once it has been moderated.<br /><br />"; ?>
-Click <a href='<?php echo $blpluginpath; ?>submitnewissue.php'>here</a> to submit a new issue or close the window to go continue browsing the database.
+Click <a href='<?php echo home_url(); ?>?bug_library_popup_content=true'>here</a> to submit a new issue or close the window to go continue browsing the database.
 </div>
 <?php endif; ?>
 </body>

@@ -93,6 +93,8 @@ class bug_library_plugin {
 		add_action('delete_post', array($this, 'delete_bug_field'));
 		
 		add_action('admin_menu', array($this, 'my_admin_menu'));
+
+        add_action( 'template_redirect', array( $this, 'bl_template_redirect' ) );
 		
 		// Function to determine if Bug Library is used on a page before printing headers
 		add_filter('the_posts', array($this, 'conditionally_add_scripts_and_styles')); // the_posts gets triggered before wp_head
@@ -2037,7 +2039,7 @@ class bug_library_plugin {
 		if ($bugcatid != -1)
 			$querystring = "?bugcatid=" . $bugcatid;
 		
-		$output .= "\tjQuery('#submitnewissue').colorbox({href:'" . $blpluginpath . "submitnewissue.php" . $querystring . "', opacity: 0.3, iframe:true, width:'570px', height:'660px'});";
+		$output .= "\tjQuery('#submitnewissue').colorbox({href:'" . home_url() . ( empty( $querystring ) ? '?' : '&' ) . "bug_library_popup_content=true" . $querystring . "', opacity: 0.3, iframe:true, width:'580px', height:'720px'});";
 		$output .= "});";
 		$output .= "/* ]]> */";
 		$output .= "</SCRIPT>";
@@ -2115,6 +2117,15 @@ class bug_library_plugin {
 	 
 		return $posts;
 	}
+
+    function bl_template_redirect( $template ) {
+        if ( !empty( $_GET['bug_library_popup_content'] ) ) {
+            require_once plugin_dir_path( __FILE__ ) . 'submitnewissue.php';
+            exit;
+        } else {
+            return $template;
+        }
+    }
 }
 
 $my_bug_library_plugin = new bug_library_plugin();
