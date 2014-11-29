@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.3.1 =
+* Corrected PHP warnings
+
 = 1.3 =
 * Changed mechanism to display the submit new issues popup
 
