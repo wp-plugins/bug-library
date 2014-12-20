@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.3.2
+Version: 1.3.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -780,9 +780,9 @@ class bug_library_plugin {
 
 			if(array_key_exists('attachimage', $_FILES))
 			{
-				$file_extension = pathinfo( $_FILES['attachimage']['tmp_name'], PATHINFO_EXTENSION );
-				$target_path = $uploads['basedir'] . "/bug-library/bugimage-" . $post->ID . $file_extension;
-				$file_path = $uploads['baseurl'] . "/bug-library/bugimage-" . $post->ID . $file_extension;
+				$file_extension = pathinfo( $_FILES['attachimage']['name'], PATHINFO_EXTENSION );
+				$target_path = $uploads['basedir'] . "/bug-library/bugimage-" . $post->ID . '.' . $file_extension;
+				$file_path = $uploads['baseurl'] . "/bug-library/bugimage-" . $post->ID . '.' . $file_extension;
 
 				if (move_uploaded_file($_FILES['attachimage']['tmp_name'], $target_path))
 				{
@@ -1121,7 +1121,7 @@ class bug_library_plugin {
 			$priorityterm = get_term_by('id', $_POST['bug-library-priority'], 'bug-library-priority');
 			$genoptions['defaultuserbugpriority'] = $priorityterm->name;
 
-			if ( !isset( $genoptions['allowattach'] ) && $_POST['allowattach'] == true)
+			if ( ( !isset( $genoptions['allowattach'] ) || false == $genoptions['allowattach'] ) && isset( $_POST['allowattach'] ) )
 			{
 				$uploads = wp_upload_dir();
 
@@ -1143,7 +1143,7 @@ class bug_library_plugin {
 					$genoptions['allowattach'] = true;
 				}
 			}
-			elseif ( isset( $_POST['allowattach'] ) && $_POST['allowattach'] == false )
+			elseif ( !isset( $_POST['allowattach'] ) )
 			{
 				$genoptions['allowattach'] = false;
 			}
