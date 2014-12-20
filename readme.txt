@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.3.2 =
+* Removed hard-coded image file extension when uploading attachments
+
 = 1.3.1 =
 * Corrected PHP warnings
 
