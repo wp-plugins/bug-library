@@ -38,6 +38,9 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.3.4 =
+* Added new option to allow comments to be closed automatically when a user-defined closure status is assigned to a bug
+
 = 1.3.3 =
 * Fixed problem with activating file attachments
 
