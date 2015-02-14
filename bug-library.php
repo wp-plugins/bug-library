@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.3.4
+Version: 1.3.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -298,9 +298,9 @@ class bug_library_plugin {
 
 	function create_bug_post_type() {
 		global $blpluginpath;
-		$genoptions = get_option( 'BugLibraryGeneral', "" );
-		if ( $genoptions['permalinkpageid'] != - 1 ) {
-			$page = get_page( $genoptions['permalinkpageid'] );
+		$genoptions = get_option( 'BugLibraryGeneral', '' );
+		if ( isset( $genoptions['permalinkpageid'] ) && $genoptions['permalinkpageid'] != - 1 ) {
+			$page = get_post( $genoptions['permalinkpageid'] );
 			$slug = $page->post_name;
 		} else {
 			$slug = 'bugs';
