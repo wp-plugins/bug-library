@@ -1,6 +1,6 @@
 ﻿=== Bug Library ===
 Contributors: jackdewey
-Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/bug-library
+Donate link: http://ylefebvre.ca/wordpress-plugins/bug-library
 Tags: bug, issue, tracker, manager, enhancement, feature, request, page, feature, custom, posts, type
 Requires at least: 3.0
 Tested up to: 4.2
