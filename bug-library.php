@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
 Version: 1.3.5
 Author: Yannick Lefebvre
-Author URI: http://yannickcorner.nayanna.biz/
+Author URI: http://ylefebvre.ca/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
 Copyright 2015 Yannick Lefebvre
