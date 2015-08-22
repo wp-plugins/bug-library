@@ -38,6 +38,10 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.3.6 =
+* Updated single item template for twenty-fifteen theme
+* Corrected some issues with default options not being created correctly
+
 = 1.3.5 =
 * Corrected PHP code warning
 

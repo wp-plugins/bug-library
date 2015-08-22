@@ -55,7 +55,7 @@ class bug_library_plugin {
 		$newoptions = get_option( 'BugLibraryGeneral', "" );
 
 		if ( $newoptions == "" ) {
-			$this->bl_reset_gen_settings();
+			$this->bl_reset_gen_settings( 'return_and_set' );
 		}
 
 		// Functions to be called when plugin is activated and deactivated
@@ -492,6 +492,8 @@ class bug_library_plugin {
 
 	function bug_library_edit_bug_details( $bug ) {
 		$genoptions = get_option( 'BugLibraryGeneral', "" );
+		$genoptions = wp_parse_args( $genoptions, $this->bl_reset_gen_settings( 'return' ) );
+
 		global $wpdb;
 
 		$products          = wp_get_post_terms( $bug->ID, "bug-library-products" );
@@ -1095,6 +1097,7 @@ class bug_library_plugin {
 		$message = '';
 
 		$genoptions = get_option( 'BugLibraryGeneral' );
+		$genoptions = wp_parse_args( $genoptions, $this->bl_reset_gen_settings( 'return' ) );
 
 		if ( isset( $_POST['importbugs'] ) ) {
 			global $wpdb;
@@ -1286,6 +1289,7 @@ class bug_library_plugin {
 
 		if ( isset( $_POST['submitstyle'] ) ) {
 			$genoptions = get_option( 'BugLibraryGeneral' );
+			$genoptions = wp_parse_args( $genoptions, $this->bl_reset_gen_settings( 'return' ) );
 
 			$genoptions['fullstylesheet'] = $_POST['fullstylesheet'];
 
@@ -1293,6 +1297,7 @@ class bug_library_plugin {
 			$message = 1;
 		} elseif ( isset( $_POST['resetstyle'] ) ) {
 			$genoptions = get_option( 'BugLibraryGeneral' );
+			$genoptions = wp_parse_args( $genoptions, $this->bl_reset_gen_settings( 'return' ) );
 
 			$stylesheetlocation = BLDIR . '/stylesheet.css';
 			if ( file_exists( $stylesheetlocation ) ) {
@@ -1590,6 +1595,7 @@ class bug_library_plugin {
 
 	function bl_page_header() {
 		$genoptions = get_option( 'BugLibraryGeneral' );
+		$genoptions = wp_parse_args( $genoptions, $this->bl_reset_gen_settings( 'return' ) );
 
 		echo "<style id='BugLibraryStyle' type='text/css'>\n";
 		echo stripslashes( $genoptions['fullstylesheet'] );
@@ -2141,6 +2147,7 @@ class bug_library_plugin {
 		), $atts ) );
 
 		$genoptions = get_option( 'BugLibraryGeneral' );
+		$genoptions = wp_parse_args( $genoptions, $this->bl_reset_gen_settings( 'return' ) );
 
 		return $this->BugLibrary( $genoptions['entriesperpage'], $genoptions['moderatesubmissions'], $bugcategorylist, $genoptions['requirelogin'],
 			$genoptions['permalinkpageid'], $genoptions['showpriority'], $genoptions['showreporter'], $genoptions['showassignee'], $bugtypeid, $bugstatusid, $bugpriorityid );

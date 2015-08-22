@@ -122,3 +122,5 @@
 #bug-library-invalid { font-weight: bold; color: #FF0000; }
 
 #bug-library-submissionaccepted { background-color: #FFFFFF; width: 500px; height: 500px; padding: 16px; font-family: "Arial"; font-size: 12px; }
+
+#bug-library-data-id, #bug-library-data-status, #bug-library-data-version, #bug-library-data-report-date, #bug-library-data-product { padding-right: 8px; }

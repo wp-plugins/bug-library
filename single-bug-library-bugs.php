@@ -1,16 +1,19 @@
 <?php
 /**
- * The Template for displaying all single posts.
+ * The template for displaying all single posts and attachments
  *
  * @package WordPress
- * @subpackage Twenty_Ten
- * @since Twenty Ten 1.0
+ * @subpackage Twenty_Fifteen
+ * @since Twenty Fifteen 1.0
  */
 
 get_header(); ?>
 
-		<div id="container">
-			<div id="content" role="main">
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+			<div class="entry-content">
 
 			<div id='bug-library-list'>
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
@@ -50,13 +53,13 @@ get_header(); ?>
 				<div id='bug-library-item-table'>
 					<table>
 					
-						<tr id="<?php if ($counter % 2 == 1) echo 'odd'; else echo 'even'; ?>">
+						<tr id="odd">
 							<td id='bug-library-type'><div id='bug-library-type-<?php echo $type->slug ?>'><?php echo $type->name ?></div></td>
 							<td id='bug-library-title'><a href='<?php echo get_permalink($post->ID); ?>'><?php echo stripslashes($post->post_title); ?></a></td>
 						</tr>
-						<tr id="<?php if ($counter % 2 == 1) echo 'odd'; else echo 'even'; ?>">
-							<td id='bug-library-data' colspan='2'>ID: <a href='<?php echo get_permalink( $post->ID); ?>'><?php echo $post->ID; ?></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Status: <?php echo $status->name; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Version: <?php if ($productversion != '') echo $productversion; else echo 'N/A'; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Report Date: <?php echo date($dateformat, $postdatetimestamp); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Product: <?php echo $product->name; ?><br />
-							<?php if ($resolutiondate != '') echo "Resolution Date: " . $resolutiondate . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resolution Version: " . $resolutionversion; ?>
+						<tr id="even">
+							<td id='bug-library-data' colspan='2'><span id="bug-library-data-id">ID: <a href='<?php echo get_permalink( $post->ID); ?>'><?php echo $post->ID; ?></a></span><span id="bug-library-data-status">Status: <?php echo $status->name; ?></span><span id="bug-library-data-version">Version: <?php if ($productversion != '') echo $productversion; else echo 'N/A'; ?></span><span id="bug-library-data-report-date">Report Date: <?php echo date($dateformat, $postdatetimestamp); ?></span><span id="bug-library-data-product">Product: <?php echo $product->name; ?></span>
+							<?php if ($resolutiondate != '') echo "<span id='bug-library-data-resolution'>Resolution Date: " . $resolutiondate . "</span><span id='bug-library-data-resolution-version'>Resolution Version: " . $resolutionversion . '</span>'; ?>
 							</td>
 						</tr>
 						<tr id='bug-library-filler'><td></td></tr>
@@ -79,13 +82,16 @@ get_header(); ?>
 				</div>
 					
 
-				<?php comments_template( '', true ); ?>
+				<?php if ( comments_open() || get_comments_number() ) :
+				comments_template();
+				endif; ?>
 
 				<?php endwhile; // end of the loop. ?>
-			</div>
+			</div></div>
 
-			</div><!-- #content -->
+			</article>
+
+			</main><!-- #content -->
 		</div><!-- #container -->
 
-<?php get_sidebar(); ?>
 <?php get_footer(); ?>
