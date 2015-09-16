@@ -3,7 +3,7 @@
 Plugin Name: Bug Library
 Plugin URI: http://wordpress.org/extend/plugins/bug-library/
 Description: Display bug manager on pages with a variety of options
-Version: 1.3.5
+Version: 1.4
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -32,15 +32,7 @@ I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 
 global $wpdb;
 
-define( 'BUG_LIBRARY_ADMIN_PAGE_NAME', 'bug-library' );
-
-define( 'BLDIR', dirname( __FILE__ ) . '/' );
-
-if ( ! defined( 'WP_ADMIN_URL' ) ) {
-	define( 'WP_ADMIN_URL', get_option( 'siteurl' ) . '/wp-admin' );
-}
-
-require_once( BLDIR . '/wp-admin-menu-classes.php' );
+require_once( plugin_dir_path( __FILE__ ) . '/wp-admin-menu-classes.php' );
 
 $pagehooktop          = "";
 $pagehookstylesheet   = "";
@@ -93,8 +85,6 @@ class bug_library_plugin {
 		add_action( 'delete_post', array( $this, 'delete_bug_field' ) );
 		add_filter( 'wp_insert_post_data', array( $this, 'filter_post_data' ), '99', 2 );
 
-		add_action( 'admin_menu', array( $this, 'my_admin_menu' ) );
-
 		add_action( 'template_redirect', array( $this, 'bl_template_redirect' ) );
 
 		// Function to determine if Bug Library is used on a page before printing headers
@@ -103,11 +93,8 @@ class bug_library_plugin {
 			'conditionally_add_scripts_and_styles'
 		) ); // the_posts gets triggered before wp_head
 
-		global $blpluginpath;
-		$blpluginpath = WP_CONTENT_URL . '/plugins/' . plugin_basename( dirname( __FILE__ ) ) . '/';
-
 		// Load text domain for translation of admin pages and text strings
-		load_plugin_textdomain( 'bug-library', $blpluginpath . '/languages', 'bug-library/languages' );
+		load_plugin_textdomain( 'bug-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 
 	/************************** Bug Library Installation Function **************************/
@@ -206,33 +193,6 @@ class bug_library_plugin {
 		), 'bug-library-bugs', 'normal', 'high' );
 	}
 
-	function my_admin_menu() {
-		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
-				'title' => 'Edit Product List',
-				'slug'  => 'edit-tags.php?taxonomy=bug-library-products&post_type=bug-library-bugs',
-			)
-		);
-
-		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
-				'title' => 'Edit Bug Statuses',
-				'slug'  => 'edit-tags.php?taxonomy=bug-library-status&post_type=bug-library-bugs',
-			)
-		);
-
-		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
-				'title' => 'Edit Bug Types',
-				'slug'  => 'edit-tags.php?taxonomy=bug-library-types&post_type=bug-library-bugs',
-			)
-		);
-
-		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
-				'title' => 'Edit Bug Priorities',
-				'slug'  => 'edit-tags.php?taxonomy=bug-library-priority&post_type=bug-library-bugs',
-			)
-		);
-
-	}
-
 	function my_custom_taxonomies() {
 
 		register_taxonomy(
@@ -297,7 +257,6 @@ class bug_library_plugin {
 	}
 
 	function create_bug_post_type() {
-		global $blpluginpath;
 		$genoptions = get_option( 'BugLibraryGeneral', '' );
 		if ( isset( $genoptions['permalinkpageid'] ) && $genoptions['permalinkpageid'] != - 1 ) {
 			$page = get_post( $genoptions['permalinkpageid'] );
@@ -327,11 +286,10 @@ class bug_library_plugin {
 				'menu_position' => 20,
 				'supports'      => array( 'title', 'editor', 'comments', 'thumbnail' ),
 				'taxonomies'    => array( '' ),
-				'menu_icon'     => $blpluginpath . '/icons/bug-icon.png',
+				'menu_icon'     => plugins_url( 'icons/bug-icon.png', __FILE__ ),
 				'rewrite'       => array( 'slug' => $slug )
 			)
 		);
-
 	}
 
 	function bugs_columns_list( $columns ) {
@@ -738,11 +696,9 @@ class bug_library_plugin {
 
 		echo "</table>\t";
 
-		global $blpluginpath;
-
 		echo "<script type='text/javascript'>\n";
 		echo "\tjQuery(document).ready(function() {\n";
-		echo "\t\tjQuery('#bug-library-resolution-date').datepicker({minDate: '+0', dateFormat: 'mm-dd-yy', showOn: 'both', constrainInput: true, buttonImage: '" . $blpluginpath . "/icons/calendar.png'}) });\n";
+		echo "\t\tjQuery('#bug-library-resolution-date').datepicker({minDate: '+0', dateFormat: 'mm-dd-yy', showOn: 'both', constrainInput: true, buttonImage: '" . plugins_url( '/icons/calendar.png', __FILE__ ) . "'}) });\n";
 
 		echo "jQuery( 'form#post' )\n";
 		echo "\t.attr( 'enctype', 'multipart/form-data' )\n";
@@ -880,7 +836,7 @@ class bug_library_plugin {
 		$genoptions['closecommentsonclosure'] = false;
 
 		$stylesheetlocation           = get_bloginfo( 'wpurl' ) . '/wp-content/plugins/bug-library/stylesheet.css';
-		$genoptions['fullstylesheet'] = file_get_contents( $stylesheetlocation );
+		$genoptions['fullstylesheet'] = wp_remote_fopen( $stylesheetlocation );
 
 		if ( 'return_and_set' == $setoptions ) {
 			update_option( 'BugLibraryGeneral', $genoptions );
@@ -913,19 +869,43 @@ class bug_library_plugin {
 	//extend the admin menu
 	function on_admin_menu() {
 		//add our own option page, you can also add it to different sections or use your own one
-		global $wpdb, $blpluginpath, $pagehooktop, $pagehookstylesheet, $pagehookinstructions;
+		global $wpdb, $pagehooktop, $pagehookstylesheet, $pagehookinstructions;
 
-		$pagehooktop = add_menu_page( __( 'Bug Library General Options', 'bug-library' ), "Bug Library", 'manage_options', BUG_LIBRARY_ADMIN_PAGE_NAME, array(
-			$this,
-			'on_show_page'
-		), $blpluginpath . '/icons/bug-icon.png' );
+		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
+				'title' => 'Edit Product List',
+				'slug'  => 'edit-tags.php?taxonomy=bug-library-products&post_type=bug-library-bugs',
+			)
+		);
 
-		$pagehookstylesheet = add_submenu_page( BUG_LIBRARY_ADMIN_PAGE_NAME, __( 'Bug Library - Stylesheet Editor', 'bug-library' ), __( 'Stylesheet', 'bug-library' ), 'manage_options', 'bug-library-stylesheet', array(
+		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
+				'title' => 'Edit Bug Statuses',
+				'slug'  => 'edit-tags.php?taxonomy=bug-library-status&post_type=bug-library-bugs',
+			)
+		);
+
+		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
+				'title' => 'Edit Bug Types',
+				'slug'  => 'edit-tags.php?taxonomy=bug-library-types&post_type=bug-library-bugs',
+			)
+		);
+
+		add_admin_menu_item( 'Bugs', array(                       // (Another way to get a 'Add Actor' Link to a section.)
+				'title' => 'Edit Bug Priorities',
+				'slug'  => 'edit-tags.php?taxonomy=bug-library-priority&post_type=bug-library-bugs',
+			)
+		);
+
+		$pagehooktop = add_submenu_page( 'edit.php?post_type=bug-library-bugs', __( 'Bug Library General Options', 'bug-library' ), "General Options", 'manage_options', 'bug-library-general-options', array(
 			$this,
 			'on_show_page'
 		) );
 
-		$pagehookinstructions = add_submenu_page( BUG_LIBRARY_ADMIN_PAGE_NAME, __( 'Bug Library - Instructions', 'bug-library' ), __( 'Instructions', 'bug-library' ), 'manage_options', 'bug-library-instructions', array(
+		$pagehookstylesheet = add_submenu_page( 'edit.php?post_type=bug-library-bugs', __( 'Bug Library - Stylesheet Editor', 'bug-library' ), __( 'Stylesheet', 'bug-library' ), 'manage_options', 'bug-library-stylesheet', array(
+			$this,
+			'on_show_page'
+		) );
+
+		$pagehookinstructions = add_submenu_page( 'edit.php?post_type=bug-library-bugs', __( 'Bug Library - Instructions', 'bug-library' ), __( 'Instructions', 'bug-library' ), 'manage_options', 'bug-library-instructions', array(
 			$this,
 			'on_show_page'
 		) );
@@ -977,7 +957,7 @@ class bug_library_plugin {
 	//executed to show the plugins complete admin page
 	function on_show_page() {
 		//we need the global screen column value to beable to have a sidebar in WordPress 2.8
-		global $screen_layout_columns, $blpluginpath;
+		global $screen_layout_columns;
 
 		// Retrieve general options
 		$genoptions = get_option( 'BugLibraryGeneral' );
@@ -989,7 +969,7 @@ class bug_library_plugin {
 		}
 
 		// Check for current page to set some page=specific variables
-		if ( isset( $_GET['page'] ) && $_GET['page'] == 'bug-library' ) {
+		if ( isset( $_GET['page'] ) && $_GET['page'] == 'bug-library-general-options' ) {
 			if ( isset( $_GET['message'] ) && $_GET['message'] == '1' ) {
 				echo "<div id='message' class='updated fade'><p><strong>" . __( 'General Settings Saved', 'bug-library' ) . ".</strong></p></div>";
 			} elseif ( isset( $_GET['message'] ) && $_GET['message'] == '2' ) {
@@ -1026,9 +1006,9 @@ class bug_library_plugin {
 		global $pagehooktop, $pagehookstylesheet, $pagehookinstructions;
 		?>
 		<div id="bug-library-general" class="wrap">
-			<div class='icon32'><img src="<?php echo $blpluginpath . '/icons/bug-icon32.png'; ?>" /></div>
+			<div class='icon32'><img src="<?php echo plugins_url( '/icons/bug-icon32.png', __FILE__ ); ?>" /></div>
 			<h2><?php echo $pagetitle; ?>
-				<span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/bug-library/" target="buglibrary"><img src="<?php echo $blpluginpath; ?>/icons/btn_donate_LG.gif" /></a></span>
+				<span style='padding-left: 50px'><a href="http://ylefebvre.ca/wordpress-plugins/bug-library/" target="buglibrary"><img src="<?php echo plugins_url( '/icons/btn_donate_LG.gif', __FILE__ ); ?>" /></a></span>
 			</h2>
 
 			<form name='buglibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
@@ -1043,7 +1023,7 @@ class bug_library_plugin {
 					<div id="post-body" class="has-sidebar">
 						<div id="post-body-content" class="has-sidebar-content">
 							<?php
-							if ( $_GET['page'] == 'bug-library' ) {
+							if ( $_GET['page'] == 'bug-library-general-options' ) {
 								do_meta_boxes( $pagehooktop, 'normal', $data );
 							} elseif ( $_GET['page'] == 'bug-library-stylesheet' ) {
 								do_meta_boxes( $pagehookstylesheet, 'normal', $data );
@@ -1301,7 +1281,7 @@ class bug_library_plugin {
 
 			$stylesheetlocation = BLDIR . '/stylesheet.css';
 			if ( file_exists( $stylesheetlocation ) ) {
-				$genoptions['fullstylesheet'] = file_get_contents( $stylesheetlocation );
+				$genoptions['fullstylesheet'] = wp_remote_fopen( $stylesheetlocation );
 			}
 
 			update_option( 'BugLibraryGeneral', $genoptions );
@@ -1464,7 +1444,7 @@ class bug_library_plugin {
 					<input type="checkbox" id="requirename" name="requirename" <?php checked( $genoptions['requirename'] ); ?>/>
 				</td>
 				<td></td>
-				<td>Require Product Version</td>
+				<td>Require Reporter E-mail</td>
 				<td>
 					<input type="checkbox" id="requireemail" name="requireemail" <?php checked( $genoptions['requireemail'] ); ?>/>
 				</td>
@@ -1551,8 +1531,7 @@ class bug_library_plugin {
 					} ?>/></td>
 			</tr>
 			<tr>
-				<td class='bltooltip' title='<?php _e( 'Allows for bugs to be added in batch to the Wordpress bugs database. CSV file needs to follow template for column layout.', 'bug-library' ); ?>' style='width: 330px'><?php _e( 'CSV file to upload to import bugs', 'bug-library' ); ?> (<a href="<?php global $blpluginpath;
-					echo $blpluginpath . 'importtemplate.csv'; ?>"><?php _e( 'file template', 'bug-library' ); ?></a>)
+				<td class='bltooltip' title='<?php _e( 'Allows for bugs to be added in batch to the Wordpress bugs database. CSV file needs to follow template for column layout.', 'bug-library' ); ?>' style='width: 330px'><?php _e( 'CSV file to upload to import bugs', 'bug-library' ); ?> (<a href="<?php echo plugins_url( 'importtemplate.csv', __FILE__ ); ?>"><?php _e( 'file template', 'bug-library' ); ?></a>)
 				</td>
 				<td><input size="80" name="bugsfile" type="file" /></td>
 				<td><input type="submit" name="importbugs" value="<?php _e( 'Import Bugs', 'link-library' ); ?>" /></td>
@@ -1624,7 +1603,7 @@ class bug_library_plugin {
 		$showpriority = false, $showreporter = false, $showassignee = false, $shortcodebugtypeid = '', $shortcodebugstatusid = '', $shortcodebugpriorityid = ''
 	) {
 
-		global $wpdb, $blpluginpath;
+		global $wpdb;
 
 		if ( isset( $_GET['bugid'] ) ) {
 			$bugid = intval( $_GET['bugid'] );
@@ -1685,6 +1664,7 @@ class bug_library_plugin {
 
 		$bugquery .= "WHERE bugs.post_type = 'bug-library-bugs' AND ttp.taxonomy = 'bug-library-products' ";
 		$bugquery .= "AND tts.taxonomy = 'bug-library-status' AND ttt.taxonomy = 'bug-library-types' AND ttpr.taxonomy = 'bug-library-priority' ";
+		$bugquery .= "AND bugs.post_status != 'trash' ";
 
 		if ( $bugcategorylist != '' ) {
 			$bugquery .= "AND pt.term_id in ('" . $bugcategorylist . "') ";
@@ -1805,7 +1785,7 @@ class bug_library_plugin {
 				$parentslug = 'bugs';
 			}
 
-			$output .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/" . $parentslug . "'>Remove all filters</a>";
+			$output .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='" . home_url() .  "/" . $parentslug . "'>Remove all filters</a>";
 
 			$output .= "</div>";
 

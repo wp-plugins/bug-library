@@ -38,9 +38,21 @@ These shortcode options can be combined:
 
 == Changelog ==
 
+= 1.4 =
+* Modified bug query for shortcode display to avoid displaying bugs that are in trash
+
+= 1.3.9 =
+* Re-arranged all menu items under Bugs menu in admin to make it easier to find all related items
+* General code cleanup
+
+= 1.3.8 =
+* Changed file_get_contents for wp_remote_fopen
+
 = 1.3.6 =
 * Updated single item template for twenty-fifteen theme
 * Corrected some issues with default options not being created correctly
+* Added uninstall function
+* Corrected label in admin
 
 = 1.3.5 =
 * Corrected PHP code warning
